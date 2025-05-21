@@ -1,10 +1,10 @@
 pipeline {
-  agent any
-
-  kubernetes {
-      label 'chaos-gatling'
+  agent {
+    kubernetes {
+      label 'chaos-gatling-agent'
+      defaultContainer 'jnlp'
     }
-
+  }
 
   environment {
     HOST = "${params.HOST}"
@@ -22,15 +22,15 @@ pipeline {
   }
 
   parameters {
-    string(name: 'HOST', defaultValue: 'http://your-host-url', description: 'Base URL')
+    string(name: 'HOST', defaultValue: 'http://af4d44ba720bf49a48d12c7012a9ed1c-1731688269.us-west-2.elb.amazonaws.com', description: 'Base URL')
     string(name: 'NUM_USERS', defaultValue: '300', description: 'No. of users')
     string(name: 'TEST_DURATION', defaultValue: '60', description: 'Test duration in seconds')
     string(name: 'NAMESPACE', defaultValue: 'default', description: 'K8s namespace')
 
-    string(name: 'ACCOUNT_ID', defaultValue: '', description: 'Harness Account ID')
-    string(name: 'ORG_ID', defaultValue: '', description: 'Harness Org ID')
-    string(name: 'PROJECT_ID', defaultValue: '', description: 'Harness Project ID')
-    string(name: 'WORKFLOW_ID', defaultValue: '', description: 'Chaos Workflow ID')
+    string(name: 'ACCOUNT_ID', defaultValue: 'cTU1lRSWS2SSRV9phKvuOA', description: 'Harness Account ID')
+    string(name: 'ORG_ID', defaultValue: 'default', description: 'Harness Org ID')
+    string(name: 'PROJECT_ID', defaultValue: 'chaostestingprod', description: 'Harness Project ID')
+    string(name: 'WORKFLOW_ID', defaultValue: '428b95a8-3978-4e05-9ea4-c54d40c5bc68', description: 'Chaos Workflow ID')
     string(name: 'EXPECTED_RESILIENCE_SCORE', defaultValue: '50', description: 'Minimum expected resilience score')
 
     string(name: 'DELAY', defaultValue: '2', description: 'Monitoring delay in seconds')
@@ -91,3 +91,4 @@ pipeline {
     }
   }
 }
+
