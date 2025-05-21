@@ -1,6 +1,11 @@
 pipeline {
   agent any
 
+  kubernetes {
+      label 'chaos-gatling'
+    }
+
+
   environment {
     HOST = "${params.HOST}"
     NUM_USERS = "${params.NUM_USERS}"
