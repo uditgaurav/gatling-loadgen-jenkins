@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo "[Info] Ensuring tools are available..."
+apt update && apt install -y curl jq bc kubectl >/dev/null
+
 echo "[Info]: Creating ConfigMap for simulation script..."
 kubectl delete configmap gatling-simulation --namespace="$NAMESPACE" --ignore-not-found
 kubectl create configmap gatling-simulation --namespace="$NAMESPACE" \
