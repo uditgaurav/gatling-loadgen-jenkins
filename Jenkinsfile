@@ -11,7 +11,6 @@ pipeline {
     ORG_ID = "${params.ORG_ID}"
     PROJECT_ID = "${params.PROJECT_ID}"
     WORKFLOW_ID = "${params.WORKFLOW_ID}"
-    API_KEY = "${params.API_KEY}"
     EXPECTED_RESILIENCE_SCORE = "${params.EXPECTED_RESILIENCE_SCORE}"
     DELAY = "${params.DELAY}"
     TIMEOUT = "${params.TIMEOUT}"
@@ -27,7 +26,6 @@ pipeline {
     string(name: 'ORG_ID', defaultValue: '', description: 'Harness Org ID')
     string(name: 'PROJECT_ID', defaultValue: '', description: 'Harness Project ID')
     string(name: 'WORKFLOW_ID', defaultValue: '', description: 'Chaos Workflow ID')
-    password(name: 'API_KEY', defaultValue: '', description: 'Harness Chaos API Key (Secret)')
     string(name: 'EXPECTED_RESILIENCE_SCORE', defaultValue: '50', description: 'Minimum expected resilience score')
 
     string(name: 'DELAY', defaultValue: '2', description: 'Monitoring delay in seconds')
@@ -54,9 +52,22 @@ pipeline {
             sh 'scripts/run-loadgen.sh'
           }
         }
+
         stage('Run Chaos Experiment & Validate') {
           steps {
-            sh 'scripts/run-chaos.sh'
+            withCredentials([string(credentialsId: 'API_KEY', variable: 'API_KEY')]) {
+              sh '''
+                ACCOUNT_ID="${ACCOUNT_ID}" \
+                ORG_ID="${ORG_ID}" \
+                PROJECT_ID="${PROJECT_ID}" \
+                WORKFLOW_ID="${WORKFLOW_ID}" \
+                API_KEY="${API_KEY}" \
+                EXPECTED_RESILIENCE_SCORE="${EXPECTED_RESILIENCE_SCORE}" \
+                DELAY="${DELAY}" \
+                TIMEOUT="${TIMEOUT}" \
+                bash scripts/run-chaos.sh
+              '''
+            }
           }
         }
       }
